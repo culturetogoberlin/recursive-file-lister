@@ -18,9 +18,9 @@ func main() {
     }
 
     // Display initial prompt
-    fmt.Printf("This script will analyze the directories in '%s' and generate a list of all files.\n", startDir)
-    fmt.Printf("The file list will be written to: '%s/_filelisting/_filelisting.csv'.\n", startDir)
-    fmt.Print("Do you want to execute this script? (Y/n): ")
+    fmt.Printf("This script will analyze the directories in '%s' and create a list of all files.\n", startDir)
+    fmt.Printf("The list will be saved to: '%s/_filelisting/_filelisting.csv'.\n", startDir)
+    fmt.Print("Do you want to proceed? (Y/n): ")
 
     // Read user input for confirmation
     reader := bufio.NewReader(os.Stdin)
@@ -30,6 +30,7 @@ func main() {
     // Check user confirmation (case-insensitive)
     if userInput != "" && !(strings.EqualFold(userInput, "y") || strings.EqualFold(userInput, "yes")) {
         fmt.Println("Operation cancelled.")
+        waitForExit()
         return
     }
 
@@ -53,6 +54,7 @@ func main() {
     err = os.MkdirAll(outputDir, os.ModePerm)
     if err != nil {
         fmt.Println("Error creating output directory:", err)
+        waitForExit()
         return
     }
 
@@ -61,6 +63,7 @@ func main() {
     csvFile, err := os.Create(csvFilePath)
     if err != nil {
         fmt.Println("Error creating CSV file:", err)
+        waitForExit()
         return
     }
     defer csvFile.Close()
@@ -109,11 +112,27 @@ func main() {
     if err != nil {
         fmt.Println("Error walking the path:", err)
     } else {
-        fmt.Println("File listing CSV generated successfully!")
+        fmt.Println("\nFile listing CSV generated successfully!")
         fmt.Printf("\nSummary report:\n")
         fmt.Printf("Total directories analyzed: %d\n", dirCount)
         fmt.Printf("Total files found: %d\n", fileCount)
         fmt.Printf("Total image files identified: %d\n", imageCount)
         fmt.Printf("CSV file saved to: '%s'\n", csvFilePath)
+    }
+
+    // Wait for user input to exit
+    waitForExit()
+}
+
+// waitForExit keeps the terminal open until the user chooses to exit
+func waitForExit() {
+    fmt.Println("\nPress Enter to exit or type 'exit' or press 'ESC' to close.")
+    reader := bufio.NewReader(os.Stdin)
+    for {
+        userInput, _ := reader.ReadString('\n')
+        userInput = strings.TrimSpace(userInput)
+        if userInput == "" || strings.EqualFold(userInput, "exit") {
+            break
+        }
     }
 }
