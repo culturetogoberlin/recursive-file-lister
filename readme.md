@@ -16,24 +16,27 @@ This Go project provides a script that recursively scans all directories and sub
 ## Installation
 
 ### Prerequisites
+
 - [Go](https://golang.org/dl/) (Ensure Go is installed and `GOPATH` is set up).
 
 See [Golang Documentation](https://go.dev/doc/install).
 
 ### Steps
+
 1. Clone or download this repository.
 2. Navigate to the project folder:
 3. Build executable
+
 ```bash
 go build -o filelisting.exe main.go
 ```
 
 ## Usage
-Copy filelisting.exe to the directory where you want to run the analysis.
 
-Confirm the execution when prompted.
-
-View the report upon completion.
+* Copy filelisting.exe to the directory where you want to run the analysis. 
+* Doubleclick on filelisting.exe.
+* Confirm the execution when prompted.
+* View the report upon completion.
 
 ## Output
 
@@ -58,9 +61,16 @@ imageExtensions := map[string]bool{
     ".gif":  true,
 }
 ```
+Rebuild executable after customization:
+
+```bash
+go build -o filelisting.exe main.go
+```
 
 ## License
+
 This project is open-source and available under the MIT License.
 
 ## Author
+
 Developed by Michael Müller, Culture to go GbR.
