@@ -1,6 +1,7 @@
 package main
 
 import (
+    "bufio"
     "encoding/csv"
     "fmt"
     "os"
@@ -9,6 +10,34 @@ import (
 )
 
 func main() {
+    // Get the current working directory
+    startDir, err := os.Getwd()
+    if err != nil {
+        fmt.Println("Error getting current directory:", err)
+        return
+    }
+
+    // Display initial prompt
+    fmt.Printf("This script will analyze the directories in '%s' and generate a list of all files.\n", startDir)
+    fmt.Printf("The file list will be written to: '%s/_filelisting/_filelisting.csv'.\n", startDir)
+    fmt.Print("Do you want to execute this script? (Y/n): ")
+
+    // Read user input for confirmation
+    reader := bufio.NewReader(os.Stdin)
+    userInput, _ := reader.ReadString('\n')
+    userInput = strings.TrimSpace(userInput)
+
+    // Check user confirmation (case-insensitive)
+    if userInput != "" && !(strings.EqualFold(userInput, "y") || strings.EqualFold(userInput, "yes")) {
+        fmt.Println("Operation cancelled.")
+        return
+    }
+
+    // Counters for statistics
+    dirCount := 0
+    fileCount := 0
+    imageCount := 0
+
     // Define image file extensions
     imageExtensions := map[string]bool{
         ".jpg":  true,
@@ -17,13 +46,6 @@ func main() {
         ".tiff": true,
         ".bmp":  true,
         ".gif":  true,
-    }
-
-    // Get the current working directory
-    startDir, err := os.Getwd()
-    if err != nil {
-        fmt.Println("Error getting current directory:", err)
-        return
     }
 
     // Create a new directory for storing the CSV file
@@ -56,10 +78,14 @@ func main() {
             return err
         }
 
-        // Skip directories
+        // Count directories
         if info.IsDir() {
+            dirCount++
             return nil
         }
+
+        // Count files
+        fileCount++
 
         // Get the relative path
         relativePath, err := filepath.Rel(startDir, path)
@@ -67,14 +93,15 @@ func main() {
             return err
         }
 
-        // Check the file extension
+        // Check the file extension and type
         ext := strings.ToLower(filepath.Ext(info.Name()))
         fileType := ""
         if imageExtensions[ext] {
             fileType = "image"
+            imageCount++ // Count image files
         }
 
-        // Write to CSV if it's an image or any file
+        // Write to CSV
         writer.Write([]string{info.Name(), relativePath, fileType})
         return nil
     })
@@ -82,6 +109,11 @@ func main() {
     if err != nil {
         fmt.Println("Error walking the path:", err)
     } else {
-        fmt.Printf("File listing CSV generated at: %s\n", csvFilePath)
+        fmt.Println("File listing CSV generated successfully!")
+        fmt.Printf("\nSummary report:\n")
+        fmt.Printf("Total directories analyzed: %d\n", dirCount)
+        fmt.Printf("Total files found: %d\n", fileCount)
+        fmt.Printf("Total image files identified: %d\n", imageCount)
+        fmt.Printf("CSV file saved to: '%s'\n", csvFilePath)
     }
 }
