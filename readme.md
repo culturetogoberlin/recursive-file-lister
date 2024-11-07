@@ -18,6 +18,8 @@ This Go project provides a script that recursively scans all directories and sub
 ### Prerequisites
 - [Go](https://golang.org/dl/) (Ensure Go is installed and `GOPATH` is set up).
 
+See [Golang Documentation](https://go.dev/doc/install).
+
 ### Steps
 1. Clone or download this repository.
 2. Navigate to the project folder:
